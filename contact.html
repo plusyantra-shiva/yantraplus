@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us — ShopEase</title>
+  <meta name="description" content="Get in touch with ShopEase for order queries, product questions, or support. Reach us via WhatsApp, email, phone or the contact form.">
+  <link rel="canonical" href="https://yourdomain.com/contact.html">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="page-loader"><div class="loader-spinner"></div></div>
+
+  <header class="site-header" id="site-header"></header>
+  <div id="whatsapp-float" class="whatsapp-float"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1>Contact Us</h1>
+        <p>We usually reply within a few hours.</p>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Contact Us</div>
+
+      <div class="contact-layout">
+        <!-- Contact Info -->
+        <div class="content-block">
+          <h2>Get In Touch</h2>
+          <div class="contact-info-list mt-1">
+            <div class="contact-info-item">
+              <div class="ci-icon">📞</div>
+              <div><strong>Call Us</strong><br><span id="contact-phone"></span></div>
+            </div>
+            <div class="contact-info-item">
+              <div class="ci-icon">✉️</div>
+              <div><strong>Email</strong><br><span id="contact-email"></span></div>
+            </div>
+            <div class="contact-info-item">
+              <div class="ci-icon">📍</div>
+              <div><strong>Address</strong><br><span id="contact-address"></span></div>
+            </div>
+            <div class="contact-info-item">
+              <div class="ci-icon">🕐</div>
+              <div><strong>Business Hours</strong><br>Mon – Sat, 10:00 AM – 7:00 PM IST</div>
+            </div>
+          </div>
+          <a href="#" id="contact-whatsapp-btn" target="_blank" rel="noopener" class="btn btn-success btn-block">Chat on WhatsApp</a>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="content-block">
+          <h2>Send Us a Message</h2>
+          <p class="form-note mb-1">This form works offline (no backend) — it opens your email app with the message pre-filled, ready to send.</p>
+          <form class="contact-form" id="contact-form">
+            <div class="form-group">
+              <label for="cf-name">Full Name *</label>
+              <input type="text" id="cf-name" required placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="cf-email">Email Address *</label>
+              <input type="email" id="cf-email" required placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+              <label for="cf-phone">Phone Number</label>
+              <input type="tel" id="cf-phone" placeholder="+91 98765 43210">
+            </div>
+            <div class="form-group">
+              <label for="cf-subject">Subject *</label>
+              <select id="cf-subject" required>
+                <option value="">Select a topic</option>
+                <option>Order Query</option>
+                <option>Product Question</option>
+                <option>Return / Refund</option>
+                <option>Delivery Issue</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cf-message">Message *</label>
+              <textarea id="cf-message" rows="5" required placeholder="How can we help you?"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+            <div id="form-success">✅ Thanks! Your email app should have opened with your message ready to send.</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    renderHeader('contact');
+
+    // Fill contact info from BRAND config
+    document.getElementById('contact-phone').textContent = BRAND.phone;
+    document.getElementById('contact-email').textContent = BRAND.email;
+    document.getElementById('contact-address').textContent = BRAND.address;
+    document.getElementById('contact-whatsapp-btn').href =
+      `https://wa.me/${BRAND.whatsappNumber}?text=${encodeURIComponent('Hi ShopEase! I need some help.')}`;
+
+    // Handle contact form submit -> opens mailto: with pre-filled content
+    // (No backend/server, so this is the client-side-only way to "send" a message)
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('cf-name').value.trim();
+      const email = document.getElementById('cf-email').value.trim();
+      const phone = document.getElementById('cf-phone').value.trim();
+      const subject = document.getElementById('cf-subject').value;
+      const message = document.getElementById('cf-message').value.trim();
+
+      const body = `Name: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0AMessage:%0A${encodeURIComponent(message)}`;
+      const mailtoLink = `mailto:${BRAND.email}?subject=${encodeURIComponent('[ShopEase Contact] ' + subject)}&body=${body}`;
+
+      window.location.href = mailtoLink;
+
+      document.getElementById('form-success').classList.add('show');
+      this.reset();
+    });
+  </script>
+</body>
+</html>

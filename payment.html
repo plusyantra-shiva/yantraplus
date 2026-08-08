@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment — ShopEase</title>
+  <meta name="description" content="Complete your UPI payment securely for your ShopEase order.">
+  <meta name="robots" content="noindex"> <!-- payment pages shouldn't be indexed by search engines -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="page-loader"><div class="loader-spinner"></div></div>
+
+  <header class="site-header" id="site-header"></header>
+  <div id="whatsapp-float" class="whatsapp-float"></div>
+
+  <main>
+    <div class="container" id="payment-container" style="max-width:520px; padding-top:10px; padding-bottom:30px;">
+      <!-- Payment content injected by js/payment.js -->
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/products-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/payment.js"></script>
+  <script>
+    renderHeader('products');
+  </script>
+</body>
+</html>

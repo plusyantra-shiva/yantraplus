@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Frequently Asked Questions | ShopEase</title>
+  <meta name="description" content="Find answers to common questions about orders, shipping, payments, returns and more at ShopEase.">
+  <link rel="canonical" href="https://yourdomain.com/faq.html">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="page-loader"><div class="loader-spinner"></div></div>
+
+  <header class="site-header" id="site-header"></header>
+  <div id="whatsapp-float" class="whatsapp-float"></div>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <h1>Frequently Asked Questions</h1>
+        <p>Everything you need to know before you shop</p>
+      </div>
+    </section>
+
+    <div class="container" style="max-width:760px;">
+      <div class="breadcrumb"><a href="index.html">Home</a> / FAQ</div>
+
+      <div id="faq-list">
+        <!-- Populated by inline script below -->
+      </div>
+
+      <div class="content-block text-center mt-2">
+        <h2>Still have questions?</h2>
+        <p>Our team is happy to help you directly.</p>
+        <a href="contact.html" class="btn btn-primary mt-1">Contact Support</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    renderHeader('faq');
+
+    // FAQ data — edit/add questions here
+    const FAQS = [
+      {
+        q: "How do I place an order?",
+        a: "Browse our Products page, tap on any item to view details, then click 'Buy Now'. You'll be taken to a simple UPI payment page to complete your purchase."
+      },
+      {
+        q: "What payment methods do you accept?",
+        a: "We currently accept UPI payments only (Google Pay, PhonePe, Paytm, BHIM, or any UPI app) via QR code or UPI ID. After payment, simply send your screenshot on WhatsApp to confirm your order."
+      },
+      {
+        q: "How will I know my order is confirmed?",
+        a: "Once you send your payment screenshot via WhatsApp, our team verifies it and confirms your order with delivery details, usually within a few hours during business hours."
+      },
+      {
+        q: "How long does delivery take?",
+        a: "Orders are typically delivered within 3-7 business days depending on your location. You'll receive updates on WhatsApp once your order ships."
+      },
+      {
+        q: "Can I return or exchange a product?",
+        a: "Yes! We offer a 7-day return window from the date of delivery for most products. Please check our Return & Refund Policy page for full details and conditions."
+      },
+      {
+        q: "Is it safe to make UPI payments on this site?",
+        a: "Yes. UPI payments go directly through your trusted banking app (GPay, PhonePe, etc.) — we never store or have access to your bank details."
+      },
+      {
+        q: "Do you ship across all of India?",
+        a: "Yes, we currently ship to most pin codes across India. If you're unsure about delivery to your area, message us on WhatsApp before ordering."
+      },
+      {
+        q: "How can I contact customer support?",
+        a: "The fastest way is our WhatsApp chat button (bottom-right corner of any page). You can also email us or use the Contact Us form."
+      }
+    ];
+
+    function renderFAQs() {
+      const list = document.getElementById('faq-list');
+      list.innerHTML = FAQS.map((item, i) => `
+        <div class="faq-item" id="faq-${i}">
+          <button class="faq-question" data-index="${i}">
+            <span>${item.q}</span>
+            <span class="icon">+</span>
+          </button>
+          <div class="faq-answer"><p>${item.a}</p></div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const item = btn.closest('.faq-item');
+          const answer = item.querySelector('.faq-answer');
+          const isOpen = item.classList.contains('open');
+
+          // Close all others (accordion behaviour)
+          document.querySelectorAll('.faq-item.open').forEach(openItem => {
+            openItem.classList.remove('open');
+            openItem.querySelector('.faq-answer').style.maxHeight = null;
+          });
+
+          if (!isOpen) {
+            item.classList.add('open');
+            answer.style.maxHeight = answer.scrollHeight + 40 + 'px';
+          }
+        });
+      });
+    }
+
+    renderFAQs();
+  </script>
+</body>
+</html>

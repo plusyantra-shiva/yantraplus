@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Products — ShopEase | Electronics, Fashion, Home & Beauty</title>
+  <meta name="description" content="Browse ShopEase's full catalog of electronics, fashion, home and beauty products. Filter by category or search to find exactly what you need.">
+  <meta name="keywords" content="shop products, buy online, electronics, fashion, home, beauty">
+  <link rel="canonical" href="https://yourdomain.com/products.html">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="page-loader"><div class="loader-spinner"></div></div>
+
+  <header class="site-header" id="site-header"></header>
+  <div id="whatsapp-float" class="whatsapp-float"></div>
+
+  <main>
+    <div class="container">
+
+      <div class="breadcrumb"><a href="index.html">Home</a> / Products</div>
+
+      <div class="section-title" style="margin-bottom:2px;">All Products</div>
+
+      <!-- On-page search (separate from header search, filters live) -->
+      <div class="form-group" style="margin-top:10px;">
+        <input type="search" id="page-search-input" placeholder="Search within products..." aria-label="Search products">
+      </div>
+
+      <!-- Category filter chips -->
+      <div class="filter-bar" id="filter-bar"></div>
+
+      <p class="results-count" id="results-count"></p>
+
+      <div class="product-grid" id="products-grid"></div>
+
+      <div class="no-results" id="no-results" style="display:none;">
+        <p style="font-size:40px;">🔍</p>
+        <p>No products matched your search. Try a different keyword or category.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" id="site-footer"></footer>
+
+  <script src="js/products-data.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    renderHeader('products');
+  </script>
+</body>
+</html>

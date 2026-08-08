@@ -1,0 +1,8 @@
+# robots.txt for ShopEase
+# Update the Sitemap URL below once you know your final GitHub Pages / custom domain URL
+
+User-agent: *
+Allow: /
+Disallow: /payment.html
+
+Sitemap: https://yourdomain.com/sitemap.xml
