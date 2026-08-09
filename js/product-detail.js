@@ -2,9 +2,10 @@
    PRODUCT-DETAIL.JS — Logic for the single Product Detail page
    Handles: reading ?id= from URL, rendering product info,
    image gallery (main image + thumbnails), and Buy Now button.
+   No stock counts, ratings, or MRP are shown — not available on
+   the Meesho source listing, so we don't invent them here.
    ============================================================ */
 
-/* Get product id from URL query string, e.g. product.html?id=3 */
 function getProductIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return parseInt(params.get("id"), 10);
@@ -25,25 +26,20 @@ function switchGalleryImage(index, product) {
 function renderRelatedProducts(product) {
   const related = PRODUCTS.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
   if (related.length === 0) return '';
-  const cards = related.map(p => {
-    const discount = Math.round(((p.mrp - p.price) / p.mrp) * 100);
-    return `
+  const cards = related.map(p => `
       <div class="product-card">
         <a href="product.html?id=${p.id}" class="thumb">
-          <span class="badge-discount">${discount}% OFF</span>
           <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
         </a>
         <div class="product-info">
           <a href="product.html?id=${p.id}"><h3>${p.name}</h3></a>
           <div class="price-row">
             <span class="price-now">₹${p.price.toLocaleString('en-IN')}</span>
-            <span class="price-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>
           </div>
           <a href="product.html?id=${p.id}" class="btn btn-primary btn-block">Buy Now</a>
         </div>
       </div>
-    `;
-  }).join('');
+    `).join('');
   return `
     <section class="section">
       <div class="section-title">You May Also Like</div>
@@ -66,21 +62,18 @@ function renderProductDetail() {
         <a href="products.html" class="btn btn-primary mt-2">Browse All Products</a>
       </div>
     `;
-    document.title = "Product Not Found — ShopEase";
+    document.title = "Product Not Found — YantraPlus";
     return;
   }
 
-  // Update SEO meta tags dynamically for this product
-  document.title = `${product.name} — Buy Online at ₹${product.price} | ShopEase`;
+  document.title = `${product.name} — Buy Online at ₹${product.price} | YantraPlus`;
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute("content", product.shortDesc);
-
-  const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
 
   container.innerHTML = `
     <div class="breadcrumb">
       <a href="index.html">Home</a> / <a href="products.html">Products</a> /
-      <a href="products.html?category=${product.category}">${product.category}</a> / ${product.name}
+      <a href="products.html?category=${product.category}">${product.category === 'incense' ? 'Incense & Dhoop' : 'Rudraksha Bracelets'}</a> / ${product.name}
     </div>
 
     <div class="pd-layout">
@@ -98,18 +91,12 @@ function renderProductDetail() {
 
       <!-- INFO -->
       <div class="pd-info">
-        <span class="pd-category-tag">${product.category}</span>
+        <span class="pd-category-tag">${product.category === 'incense' ? 'Incense & Dhoop' : 'Rudraksha Bracelets'}</span>
         <h1>${product.name}</h1>
-        <div class="rating-row">
-          <span class="rating-badge">${product.rating} ★</span>
-          <span class="reviews-count">${product.reviews} ratings</span>
-        </div>
+        ${product.pack ? `<p style="font-size:13.5px; color:var(--text-muted); margin-bottom:6px;"><strong>Pack:</strong> ${product.pack}</p>` : ''}
         <div class="pd-price-block">
           <span class="price-now">₹${product.price.toLocaleString('en-IN')}</span>
-          <span class="price-mrp">₹${product.mrp.toLocaleString('en-IN')}</span>
-          <span class="price-off">${discount}% off</span>
         </div>
-        <p class="pd-stock">✔ In Stock (${product.stock} available)</p>
 
         <div class="pd-desc">
           <h3>Product Description</h3>
@@ -122,10 +109,8 @@ function renderProductDetail() {
         </div>
 
         <div class="trust-badges">
-          <span class="trust-badge">🚚 Free Delivery</span>
-          <span class="trust-badge">↩️ 7-Day Returns</span>
           <span class="trust-badge">🔒 Secure UPI Payment</span>
-          <span class="trust-badge">✅ Quality Checked</span>
+          <span class="trust-badge">📦 Manually Verified Orders</span>
         </div>
       </div>
     </div>
@@ -133,7 +118,6 @@ function renderProductDetail() {
     ${renderRelatedProducts(product)}
   `;
 
-  // Wire up thumbnail clicks after render
   document.querySelectorAll(".pd-thumbs img").forEach(thumb => {
     thumb.addEventListener("click", () => {
       switchGalleryImage(parseInt(thumb.dataset.index, 10), product);

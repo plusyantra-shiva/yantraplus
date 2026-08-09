@@ -1,24 +1,242 @@
 /* ============================================================
-   PAYMENT.JS — Logic for the UPI Payment page
-   Reads ?id= from URL, shows order summary + QR + UPI ID,
-   and builds the pre-filled WhatsApp "send screenshot" link.
+   PAYMENT.JS — Full checkout flow
+   Product → Customer Details → Order Summary → UPI Payment → WhatsApp Confirmation
+   All calculations (subtotal/total) are dynamic. Payment stays 100%
+   manual: customer pays via UPI, screenshots it, sends on WhatsApp,
+   and YOU verify it manually. No automatic payment verification.
    ============================================================ */
+
+/* EDIT THIS: shipping fee in ₹. Not provided by Meesho/you, so it
+   defaults to 0 (free). Change if you charge for delivery. */
+const SHIPPING_FEE = 0;
+
+let checkoutState = {
+  product: null,
+  quantity: 1,
+  step: 1, // 1 = quantity, 2 = customer details, 3 = payment
+  customer: { name: '', mobile: '', address: '', city: '', state: '', pincode: '' },
+  orderId: null
+};
 
 function getProductIdFromURL() {
   const params = new URLSearchParams(window.location.search);
   return parseInt(params.get("id"), 10);
 }
 
-function copyUPIId() {
-  navigator.clipboard.writeText(BRAND.upiId).then(() => {
-    const btn = document.getElementById("copy-upi-btn");
-    const original = btn.textContent;
-    btn.textContent = "Copied!";
-    setTimeout(() => (btn.textContent = original), 1500);
+function calcTotals() {
+  const subtotal = checkoutState.product.price * checkoutState.quantity;
+  const total = subtotal + SHIPPING_FEE;
+  return { subtotal, shipping: SHIPPING_FEE, total };
+}
+
+/* ---------- STEP 1: Quantity ---------- */
+function renderStep1() {
+  const p = checkoutState.product;
+  const container = document.getElementById("payment-container");
+  container.innerHTML = `
+    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="product.html?id=${p.id}">${p.name}</a> / Checkout</div>
+    <div class="payment-card">
+      <h2 class="mb-1">Checkout</h2>
+      <div class="payment-product">
+        <img src="${p.images[0]}" alt="${p.name}">
+        <div>
+          <div class="name">${p.name}</div>
+          <div class="amount">₹${p.price} ${p.pack ? '· ' + p.pack : ''}</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="qty-input">Quantity</label>
+        <div style="display:flex; align-items:center; gap:12px; justify-content:center;">
+          <button type="button" id="qty-minus" class="btn btn-outline" style="border-color:var(--brand-secondary); color:var(--brand-secondary); padding:8px 16px;">−</button>
+          <span id="qty-display" style="font-size:20px; font-weight:700; min-width:30px;">1</span>
+          <button type="button" id="qty-plus" class="btn btn-outline" style="border-color:var(--brand-secondary); color:var(--brand-secondary); padding:8px 16px;">+</button>
+        </div>
+      </div>
+      <button type="button" id="continue-to-details" class="btn btn-primary btn-block mt-2">Continue to Delivery Details</button>
+    </div>
+  `;
+
+  document.getElementById("qty-minus").addEventListener("click", () => {
+    if (checkoutState.quantity > 1) {
+      checkoutState.quantity--;
+      document.getElementById("qty-display").textContent = checkoutState.quantity;
+    }
+  });
+  document.getElementById("qty-plus").addEventListener("click", () => {
+    checkoutState.quantity++;
+    document.getElementById("qty-display").textContent = checkoutState.quantity;
+  });
+  document.getElementById("continue-to-details").addEventListener("click", () => {
+    checkoutState.step = 2;
+    renderStep2();
   });
 }
 
-function renderPaymentPage() {
+/* ---------- STEP 2: Customer Details ---------- */
+function renderStep2() {
+  const container = document.getElementById("payment-container");
+  const c = checkoutState.customer;
+  container.innerHTML = `
+    <div class="breadcrumb"><a href="index.html">Home</a> / Checkout / Delivery Details</div>
+    <div class="payment-card" style="text-align:left;">
+      <h2 class="mb-1" style="text-align:center;">Delivery Details</h2>
+      <form id="customer-form" class="contact-form">
+        <div class="form-group">
+          <label for="c-name">Full Name *</label>
+          <input type="text" id="c-name" required value="${c.name}" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label for="c-mobile">Mobile Number *</label>
+          <input type="tel" id="c-mobile" required pattern="[0-9]{10}" value="${c.mobile}" placeholder="10-digit mobile number">
+        </div>
+        <div class="form-group">
+          <label for="c-address">Full Delivery Address *</label>
+          <textarea id="c-address" rows="3" required placeholder="House/Flat No., Street, Landmark">${c.address}</textarea>
+        </div>
+        <div class="form-group">
+          <label for="c-city">City *</label>
+          <input type="text" id="c-city" required value="${c.city}" placeholder="City">
+        </div>
+        <div class="form-group">
+          <label for="c-state">State *</label>
+          <input type="text" id="c-state" required value="${c.state}" placeholder="State">
+        </div>
+        <div class="form-group">
+          <label for="c-pincode">Pincode *</label>
+          <input type="text" id="c-pincode" required pattern="[0-9]{6}" value="${c.pincode}" placeholder="6-digit pincode">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-1">Continue to Payment</button>
+        <button type="button" id="back-to-qty" class="btn btn-outline btn-block" style="border-color:var(--brand-secondary); color:var(--brand-secondary);">← Back</button>
+      </form>
+    </div>
+  `;
+
+  document.getElementById("back-to-qty").addEventListener("click", () => {
+    checkoutState.step = 1;
+    renderStep1();
+  });
+
+  document.getElementById("customer-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    checkoutState.customer = {
+      name: document.getElementById("c-name").value.trim(),
+      mobile: document.getElementById("c-mobile").value.trim(),
+      address: document.getElementById("c-address").value.trim(),
+      city: document.getElementById("c-city").value.trim(),
+      state: document.getElementById("c-state").value.trim(),
+      pincode: document.getElementById("c-pincode").value.trim()
+    };
+    checkoutState.orderId = generateOrderId();
+    checkoutState.step = 3;
+    renderStep3();
+  });
+}
+
+/* ---------- STEP 3: Order Summary + UPI Payment ---------- */
+function renderStep3() {
+  const p = checkoutState.product;
+  const c = checkoutState.customer;
+  const { subtotal, shipping, total } = calcTotals();
+  const container = document.getElementById("payment-container");
+
+  const upiHandlePlaceholder = BRAND.upiVpaHandle === "CONFIRM-HANDLE";
+
+  container.innerHTML = `
+    <div class="breadcrumb"><a href="index.html">Home</a> / Checkout / Payment</div>
+    <div class="payment-card" style="text-align:left;">
+      <h2 class="mb-1" style="text-align:center;">Order Summary</h2>
+
+      <div class="content-block" style="box-shadow:none; background:var(--bg-light); padding:14px; margin-bottom:14px;">
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Order ID</p>
+        <p style="font-weight:700; font-size:15px; margin-bottom:12px;">${checkoutState.orderId}</p>
+
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:2px;">Deliver to</p>
+        <p style="font-size:13.5px; margin-bottom:0;">${c.name} · ${c.mobile}</p>
+        <p style="font-size:13.5px; color:var(--text-muted);">${c.address}, ${c.city}, ${c.state} - ${c.pincode}</p>
+      </div>
+
+      <div class="payment-product">
+        <img src="${p.images[0]}" alt="${p.name}">
+        <div>
+          <div class="name">${p.name}</div>
+          <div style="font-size:12px; color:var(--text-muted);">Qty: ${checkoutState.quantity} × ₹${p.price}</div>
+        </div>
+      </div>
+
+      <table style="width:100%; font-size:13.5px; margin:14px 0;">
+        <tr><td style="padding:4px 0;">Subtotal</td><td style="text-align:right;">₹${subtotal}</td></tr>
+        <tr><td style="padding:4px 0;">Shipping</td><td style="text-align:right;">${shipping === 0 ? 'FREE' : '₹' + shipping}</td></tr>
+        <tr style="font-weight:700; font-size:15px; border-top:1px solid var(--border-color);"><td style="padding:8px 0;">Total</td><td style="text-align:right;">₹${total}</td></tr>
+      </table>
+
+      <hr style="border:none; border-top:1px solid var(--border-color); margin:14px 0;">
+
+      <h3 style="text-align:center; font-size:16px; margin-bottom:10px;">Pay via UPI</h3>
+      <div class="text-center">
+        <div class="qr-wrap">
+          <img src="assets/images/qr-placeholder.svg" alt="UPI QR code for payment">
+        </div>
+        <div class="upi-id-box">
+          <span id="upi-id-text">${UPI_ID}</span>
+          <button id="copy-upi-btn" type="button">Copy</button>
+        </div>
+        ${upiHandlePlaceholder ? `<p style="font-size:12px; color:var(--danger); font-weight:600; margin-bottom:6px;">⚠️ UPI handle not confirmed yet — this ID won't work until the seller updates it (see setup notes).</p>` : ''}
+        <p style="font-size:12px; color:var(--text-muted);">Scan the QR or pay to the UPI ID above using any UPI app.</p>
+      </div>
+
+      <ol class="payment-steps">
+        <li>Pay the exact total shown above: <strong>₹${total}</strong>.</li>
+        <li>Take a screenshot of your successful payment confirmation.</li>
+        <li>Tap the button below to send your order details + screenshot on WhatsApp.</li>
+        <li>We'll verify your payment manually and confirm your order.</li>
+      </ol>
+
+      <a href="#" id="whatsapp-confirm-btn" class="whatsapp-confirm-btn">
+        <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-1 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.5-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4 0-.1-.2-.2-.5-.3zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.3a8.2 8.2 0 0 1-4.3-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.3 8.3 0 1 1 20.3 12 8.3 8.3 0 0 1 12 20.3z"/></svg>
+        Send Payment Screenshot on WhatsApp
+      </a>
+
+      <button type="button" id="back-to-details" class="btn btn-outline btn-block mt-1" style="border-color:var(--brand-secondary); color:var(--brand-secondary);">← Back</button>
+
+      <p style="font-size:12px; color:var(--text-muted); margin-top:14px; text-align:center;">Your order is confirmed only after we manually verify your payment. This is not an automatic payment system.</p>
+    </div>
+  `;
+
+  document.getElementById("copy-upi-btn").addEventListener("click", () => {
+    navigator.clipboard.writeText(UPI_ID).then(() => {
+      const btn = document.getElementById("copy-upi-btn");
+      const original = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(() => (btn.textContent = original), 1500);
+    });
+  });
+
+  document.getElementById("back-to-details").addEventListener("click", () => {
+    checkoutState.step = 2;
+    renderStep2();
+  });
+
+  document.getElementById("whatsapp-confirm-btn").addEventListener("click", (e) => {
+    e.preventDefault();
+    const link = buildWhatsappOrderLink({
+      orderId: checkoutState.orderId,
+      productName: p.name,
+      quantity: checkoutState.quantity,
+      price: p.price,
+      subtotal, shipping, total,
+      customerName: c.name,
+      customerMobile: c.mobile,
+      address: c.address,
+      city: c.city,
+      state: c.state,
+      pincode: c.pincode
+    });
+    window.open(link, '_blank');
+  });
+}
+
+/* ---------- INIT ---------- */
+function initCheckout() {
   const id = getProductIdFromURL();
   const product = PRODUCTS.find(p => p.id === id);
   const container = document.getElementById("payment-container");
@@ -27,57 +245,16 @@ function renderPaymentPage() {
     container.innerHTML = `
       <div class="empty-state">
         <p style="font-size:40px;">😕</p>
-        <p>No product selected for payment.</p>
+        <p>No product selected for checkout.</p>
         <a href="products.html" class="btn btn-primary mt-2">Browse Products</a>
       </div>
     `;
     return;
   }
 
-  document.title = `Pay ₹${product.price} for ${product.name} — ShopEase`;
-
-  container.innerHTML = `
-    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="product.html?id=${product.id}">${product.name}</a> / Payment</div>
-
-    <div class="payment-card">
-      <h2 class="mb-1">Complete Your Payment</h2>
-      <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Scan the QR code or use the UPI ID below to pay via any UPI app (GPay, PhonePe, Paytm, BHIM).</p>
-
-      <div class="payment-product">
-        <img src="${product.images[0]}" alt="${product.name}">
-        <div>
-          <div class="name">${product.name}</div>
-          <div class="amount">₹${product.price.toLocaleString('en-IN')}</div>
-        </div>
-      </div>
-
-      <div class="qr-wrap">
-        <img src="assets/images/qr-placeholder.svg" alt="UPI QR code for payment">
-      </div>
-
-      <div class="upi-id-box">
-        <span id="upi-id-text">${BRAND.upiId}</span>
-        <button id="copy-upi-btn" type="button">Copy</button>
-      </div>
-      <p style="font-size:12px; color:var(--text-muted);">(Replace this QR image & UPI ID in assets/images/qr-placeholder.svg and js/main.js)</p>
-
-      <ol class="payment-steps">
-        <li>Open any UPI app and scan the QR code above, or enter the UPI ID manually.</li>
-        <li>Pay the exact amount shown: <strong>₹${product.price.toLocaleString('en-IN')}</strong>.</li>
-        <li>Take a screenshot of your successful payment confirmation.</li>
-        <li>Tap the button below to send us the screenshot on WhatsApp for order confirmation.</li>
-      </ol>
-
-      <a href="${buildWhatsappOrderLink(product.name, product.price)}" target="_blank" rel="noopener" class="whatsapp-confirm-btn">
-        <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-1 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.5-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4 0-.1-.2-.2-.5-.3zM12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.3a8.2 8.2 0 0 1-4.3-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.3 8.3 0 1 1 20.3 12 8.3 8.3 0 0 1 12 20.3z"/></svg>
-        Send Payment Screenshot on WhatsApp
-      </a>
-
-      <p style="font-size:12px; color:var(--text-muted); margin-top:14px;">Your order will be confirmed once we verify the payment. This usually takes a few minutes during business hours.</p>
-    </div>
-  `;
-
-  document.getElementById("copy-upi-btn").addEventListener("click", copyUPIId);
+  document.title = `Checkout — ${product.name} | ${BRAND.name}`;
+  checkoutState.product = product;
+  renderStep1();
 }
 
-document.addEventListener("DOMContentLoaded", renderPaymentPage);
+document.addEventListener("DOMContentLoaded", initCheckout);

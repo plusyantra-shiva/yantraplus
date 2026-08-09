@@ -1,122 +1,67 @@
-# ShopEase — E-commerce Website (HTML + CSS + JS only)
+# YantraPlus — Pooja & Spiritual Essentials (HTML + CSS + JS only)
 
-A complete, production-quality, responsive e-commerce website built with **pure HTML, CSS and JavaScript** — no frameworks, no backend, no database. Ready to deploy on **GitHub Pages** as-is.
+A responsive e-commerce website for YantraPlus — incense sticks, dhoop, hawan cups
+and Rudraksha bracelets — populated with the real catalog from
+https://meesho.com/yantraplus. Pure HTML/CSS/JS, no backend, ready for GitHub
+Pages at https://plusyantra-shiva.github.io/yantraplus/.
 
----
+## ⚠️ Before you go live — 2 things you MUST do
 
-## 📁 Folder Structure
+1. **Confirm your UPI handle.** Open `js/main.js` and find:
+   ```js
+   upiVpaHandle: "CONFIRM-HANDLE",
+   ```
+   Replace `"CONFIRM-HANDLE"` with your real UPI app's suffix (see the chat
+   summary for what this means and how to find yours). Until you do this,
+   the payment page will show `9743763945@CONFIRM-HANDLE`, which will not work.
+
+2. **Replace the QR code placeholder.** Swap `assets/images/qr-placeholder.svg`
+   for your real UPI QR code (exported from your UPI app), keeping the same
+   filename — or update the path in `js/payment.js`.
+
+## Other things worth reviewing
+
+- **Product images are placeholders.** Meesho blocks automated image downloads
+  (robots.txt), so real product photos couldn't be pulled in. Replace the SVGs
+  in `assets/images/products/` with real photos (from your Meesho seller
+  dashboard) whenever you're ready — same filenames, or update `js/products-data.js`.
+- **3 of 23 Meesho listings are missing.** The store's page 2 is JS-rendered
+  and wasn't reachable — add them manually to `js/products-data.js` (same
+  shape as the other 20 entries) once you have the details.
+- **Shipping policy, return policy, and delivery timelines are editable
+  placeholders** (clearly marked with a ⚠️ notice on those pages) — nothing
+  invented was presented as fact. Fill in your real numbers before publishing.
+- **WhatsApp number** is currently set to the same number you gave for UPI
+  (9743763945). Change `whatsappNumber` in `js/main.js` if that's wrong.
+
+## Folder structure
 
 ```
-shopease/
-├── index.html                 → Home page (hero banner, categories, featured products)
-├── products.html               → All products listing (search + category filter)
-├── product.html                → Single product detail page (gallery, buy now)
-├── payment.html                 → UPI payment page (QR + WhatsApp screenshot confirm)
-├── about.html                  → About Us
-├── contact.html                → Contact Us (form + info)
-├── faq.html                    → FAQ accordion
-├── privacy-policy.html
-├── terms-conditions.html
-├── shipping-policy.html
-├── return-policy.html
-├── 404.html                    → Custom "page not found" page
-├── robots.txt                  → SEO crawler rules
-├── sitemap.xml                 → SEO sitemap
-├── css/
-│   └── style.css               → All styling (mobile-first, responsive)
-├── js/
-│   ├── products-data.js        → PRODUCT & CATEGORY data ("database")
-│   ├── main.js                 → Shared: header, footer, nav, loader, WhatsApp button, BRAND config
-│   ├── products.js              → Products listing page logic (search/filter)
-│   ├── product-detail.js        → Product detail page logic (gallery, related items)
-│   └── payment.js               → Payment page logic (QR, UPI ID, WhatsApp link)
-└── assets/
-    └── images/
-        ├── logo.svg, favicon.svg, hero-banner.svg
-        ├── qr-placeholder.svg   → Replace with your real UPI QR code image
-        ├── cat-*.svg            → Category icons
-        └── products/            → product-{id}-{1,2,3}.svg (gallery placeholders)
+index.html, products.html, product.html, payment.html,
+about.html, contact.html, faq.html,
+privacy-policy.html, terms-conditions.html, shipping-policy.html, return-policy.html,
+404.html, robots.txt, sitemap.xml
+css/style.css
+js/products-data.js   ← real product catalog (20 items) + BRAND config lives in main.js
+js/main.js             ← BRAND config, header/footer, order ID + WhatsApp message builder
+js/products.js          ← listing page search/filter
+js/product-detail.js    ← single product page + gallery
+js/payment.js            ← full checkout flow (qty → details → UPI → WhatsApp)
+assets/images/           ← logo, hero, category icons, QR placeholder
+assets/images/products/  ← per-product gallery placeholders (product-{id}-{1,2,3}.svg)
 ```
 
----
+## Checkout flow (as built)
 
-## ✏️ How to Customize (Do This First!)
+Product page → **Buy Now** → Quantity → Delivery Details (name, mobile, address,
+city, state, pincode) → Order Summary (subtotal/shipping/total, Order ID in
+`AGB-YYYYMMDD-XXXX` format) → UPI QR + UPI ID → **Send Payment Screenshot on
+WhatsApp** (pre-filled with the full order summary) → you verify manually and
+confirm the order. No automatic payment verification exists or is implemented.
 
-### 1. Brand details — `js/main.js`
-At the top of this file, edit the `BRAND` object:
-```js
-const BRAND = {
-  name: "ShopEase",
-  whatsappNumber: "919999999999", // your WhatsApp number, country code + number, NO + or spaces
-  email: "support@yourstore.com",
-  phone: "+91 99999 99999",
-  address: "Your store address",
-  upiId: "yourid@upi",            // your real UPI ID
-  instagram: "...", facebook: "...", twitter: "...", youtube: "..."
-};
-```
+## Deploy to GitHub Pages
 
-### 2. Products — `js/products-data.js`
-Edit the `PRODUCTS` array — add, remove, or update products, prices, descriptions, categories and image paths.
-
-### 3. Images — `assets/images/`
-All images are simple placeholder SVGs so the site works instantly out of the box. Replace them with real photos:
-- Keep the **same filenames** (e.g. `product-1-1.svg` → you can rename to `product-1-1.jpg` but then update the path in `products-data.js`), or simply overwrite the SVGs with your own images using the same filenames and `.jpg`/`.png` extensions (update the `<img>`/data references accordingly).
-- Replace `assets/images/qr-placeholder.svg` with your real UPI QR code image (export from your UPI app).
-- Replace `assets/images/logo.svg` and `assets/images/hero-banner.svg` with your brand assets.
-
-### 4. Colors / Theme — `css/style.css`
-All brand colors are CSS variables at the top of the file under `:root`. Change `--brand-primary` etc. to match your brand.
-
----
-
-## 🚀 Deploy to GitHub Pages
-
-1. Create a new GitHub repository (e.g. `shopease`).
-2. Upload/push **all files in this folder** (keeping the folder structure) to the repository's root (or a `main` branch).
-3. Go to your repo → **Settings → Pages**.
-4. Under "Build and deployment", set **Source: Deploy from a branch**, Branch: `main`, folder: `/ (root)`.
-5. Save. Your site will be live at:
-   `https://<your-username>.github.io/<repo-name>/`
-6. Update `robots.txt` and `sitemap.xml` with your real live URL, and update `<link rel="canonical">` tags in each HTML file's `<head>`.
-
-No build step, no `npm install` — it's plain static HTML/CSS/JS, so it works immediately on GitHub Pages.
-
----
-
-## 🛒 How the "Checkout" Flow Works (No Backend)
-
-1. Customer clicks **Buy Now** on a product → goes to `payment.html?id=<productId>`.
-2. `payment.html` shows the product, price, your UPI QR code and UPI ID.
-3. Customer pays via any UPI app and takes a screenshot.
-4. Customer taps **"Send Payment Screenshot on WhatsApp"** → opens WhatsApp Web/App with your number and a pre-filled message (including the product name and amount) — they just attach the screenshot and hit send.
-5. You verify the payment manually and confirm the order with the customer on WhatsApp.
-
-This keeps things 100% backend-free while still enabling real transactions.
-
----
-
-## 🔍 Features Included
-
-- Fully responsive, mobile-first design (phones → tablets → desktop)
-- Sticky header with search bar + hamburger mobile nav
-- Home page hero banner, category shortcuts, featured products
-- Products page with live search + category filter (syncs to URL)
-- Product detail page with image gallery (thumbnails), related products
-- UPI payment page with QR + copyable UPI ID + WhatsApp confirmation button
-- About, Contact (with client-side form → opens email app), FAQ (accordion)
-- Privacy Policy, Terms & Conditions, Shipping Policy, Return & Refund Policy
-- Floating WhatsApp chat button on every page
-- Page loading spinner + smooth fade-in page transitions
-- SEO meta tags (title, description, canonical, Open Graph) on every page
-- `robots.txt` + `sitemap.xml`
-- Custom 404 page
-- Clean, commented code throughout — no external dependencies, no build tools
-
----
-
-## 🧩 Notes
-
-- All "data" lives in `js/products-data.js` — there is no database or server. To scale beyond a static catalog, you'd eventually want a real backend, but this is intentionally backend-free per the project requirements.
-- Contact form uses `mailto:` (opens the visitor's email app) since there's no backend to receive form submissions.
-- Tested to work by simply opening `index.html` in a browser, or via any static file server / GitHub Pages.
+Push everything in this folder (keeping the structure) to the root of your
+`plusyantra-shiva/yantraplus` repo, `main` branch. Settings → Pages → Deploy
+from branch → `main` / `/ (root)`. Paths are all relative, so this works
+correctly under the `/yantraplus/` project path.

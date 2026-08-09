@@ -7,24 +7,20 @@
 let currentCategory = "all";
 let currentSearch = "";
 
-/* Generate the same product card markup used on the homepage */
+/* Generate the same product card markup used on the homepage.
+   No MRP/discount badge or ratings are shown — Meesho doesn't display
+   an MRP for these listings and we don't fabricate ratings. */
 function buildProductCard(p) {
-  const discount = Math.round(((p.mrp - p.price) / p.mrp) * 100);
   return `
     <div class="product-card">
       <a href="product.html?id=${p.id}" class="thumb">
-        <span class="badge-discount">${discount}% OFF</span>
         <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
       </a>
       <div class="product-info">
         <a href="product.html?id=${p.id}"><h3>${p.name}</h3></a>
-        <div class="rating-row">
-          <span class="rating-badge">${p.rating} ★</span>
-          <span class="reviews-count">(${p.reviews})</span>
-        </div>
+        ${p.pack ? `<div class="reviews-count">${p.pack}</div>` : ''}
         <div class="price-row">
           <span class="price-now">₹${p.price.toLocaleString('en-IN')}</span>
-          <span class="price-mrp">₹${p.mrp.toLocaleString('en-IN')}</span>
         </div>
         <a href="product.html?id=${p.id}" class="btn btn-primary btn-block">Buy Now</a>
       </div>
