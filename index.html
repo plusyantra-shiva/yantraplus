@@ -8,15 +8,27 @@
   <meta name="description" content="YantraPlus sells natural incense sticks, dhoop cones, hawan cups and Rudraksha bracelets for your home mandir and daily pooja. Order online, pay via UPI.">
   <meta name="keywords" content="agarbatti, incense sticks, dhoop, hawan cups, rudraksha bracelet, pooja items online India">
   <meta name="author" content="YantraPlus">
-  <link rel="canonical" href="https://yourdomain.com/index.html">
+  <link rel="canonical" href="https://yantraplus.pages.dev/index.html">
+  <meta name="robots" content="index, follow">
   <!-- Open Graph -->
   <meta property="og:title" content="YantraPlus — Pooja & Spiritual Essentials">
   <meta property="og:description" content="Shop incense sticks, dhoop and Rudraksha bracelets at YantraPlus.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/images/hero-banner.png">
+  <meta property="og:url" content="https://yantraplus.pages.dev/index.html">
+  <meta property="og:image" content="https://yantraplus.pages.dev/assets/images/hero-banner.jpg">
+  <meta property="og:site_name" content="YantraPlus">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="YantraPlus — Pooja & Spiritual Essentials">
+  <meta name="twitter:description" content="Shop incense sticks, dhoop and Rudraksha bracelets at YantraPlus.">
+  <meta name="twitter:image" content="https://yantraplus.pages.dev/assets/images/hero-banner.jpg">
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
   <!-- Stylesheet -->
+  <!-- Hindi font support (loaded only when needed; falls back instantly to system fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -34,11 +46,14 @@
 
     <!-- HERO BANNER -->
     <section class="hero">
-      <img src="assets/images/hero-banner.png" alt="YantraPlus pooja and spiritual essentials banner">
+      <picture>
+        <source srcset="assets/images/hero-banner.webp" type="image/webp">
+        <img src="assets/images/hero-banner.jpg" alt="YantraPlus pooja and spiritual essentials — incense, dhoop and Rudraksha bracelets" width="1600" height="700" fetchpriority="high">
+      </picture>
       <div class="hero-content">
-        <h1>YantraPlus — Pooja & Spiritual Essentials</h1>
-        <p>Incense sticks, dhoop and Rudraksha bracelets for your home mandir.</p>
-        <a href="products.html" class="btn btn-primary">Shop Now</a>
+        <h1 data-i18n="hero.title">YantraPlus — Pooja & Spiritual Essentials</h1>
+        <p data-i18n="hero.subtitle">Incense sticks, dhoop and Rudraksha bracelets for your home mandir.</p>
+        <a href="products.html" class="btn btn-primary" data-i18n="hero.cta">Shop Now</a>
       </div>
     </section>
 
@@ -46,25 +61,31 @@
 
       <!-- CATEGORIES -->
       <section class="section">
-        <div class="section-title">Shop by Category</div>
+        <h2 class="section-title" data-i18n="section.shopByCategory">Shop by Category</h2>
         <div class="category-scroll">
           <a href="products.html?category=incense" class="category-card">
-            <img src="assets/images/cat-incense.png" alt="Incense and dhoop category">
-            <span>Incense & Dhoop</span>
+            <picture>
+              <source srcset="assets/images/cat-incense.webp" type="image/webp">
+              <img src="assets/images/cat-incense.jpg" alt="Incense sticks and dhoop cones category" width="300" height="300" loading="lazy">
+            </picture>
+            <span data-i18n="category.incense">Incense & Dhoop</span>
           </a>
           <a href="products.html?category=bracelets" class="category-card">
-            <img src="assets/images/cat-bracelets.png" alt="Rudraksha bracelets category">
-            <span>Rudraksha Bracelets</span>
+            <picture>
+              <source srcset="assets/images/cat-bracelets.webp" type="image/webp">
+              <img src="assets/images/cat-bracelets.jpg" alt="Rudraksha bracelets category" width="300" height="300" loading="lazy">
+            </picture>
+            <span data-i18n="category.bracelets">Rudraksha Bracelets</span>
           </a>
         </div>
       </section>
 
       <!-- FEATURED PRODUCTS (rendered by home.js) -->
       <section class="section">
-        <div class="section-title">
-          Featured Products
-          <a href="products.html" class="link">View All →</a>
-        </div>
+        <h2 class="section-title">
+          <span data-i18n="section.featured">Featured Products</span>
+          <a href="products.html" class="link" data-i18n="link.viewAll">View All →</a>
+        </h2>
         <div class="product-grid" id="featured-products">
           <!-- Products injected by JS -->
         </div>
@@ -72,12 +93,13 @@
 
       <!-- WHY CHOOSE US -->
       <section class="section">
-        <div class="section-title">Why Shop With YantraPlus?</div>
+        <h2 class="section-title" data-i18n="section.whyShop">Why Shop With YantraPlus?</h2>
         <div class="value-cards">
-          <div class="value-card"><div class="icon">📦</div><h4>Shipped Across India</h4><p>Message us to confirm delivery to your pincode</p></div>
-          <div class="value-card"><div class="icon">🔒</div><h4>Secure UPI Payments</h4><p>Pay directly through your own UPI app</p></div>
-          <div class="value-card"><div class="icon">✅</div><h4>Manually Verified Orders</h4><p>Every payment checked by hand before dispatch</p></div>
-          <div class="value-card"><div class="icon">💬</div><h4>WhatsApp Support</h4><p>Reach us directly for any order query</p></div>
+          <div class="value-card"><div class="icon">📦</div><h3 data-i18n="value.shipping.title">Shipped Across India</h3><p data-i18n="value.shipping.desc">Message us to confirm delivery to your pincode</p></div>
+          <div class="value-card"><div class="icon">🔒</div><h3 data-i18n="value.payments.title">Secure UPI Payments</h3><p data-i18n="value.payments.desc">Pay directly through your own UPI app</p></div>
+
+          <div class="value-card"><div class="icon">✅</div><h3 data-i18n="value.verified.title">Manually Verified Orders</h3><p data-i18n="value.verified.desc">Every payment checked by hand before dispatch</p></div>
+          <div class="value-card"><div class="icon">💬</div><h3 data-i18n="value.support.title">WhatsApp Support</h3><p data-i18n="value.support.desc">Reach us directly for any order query</p></div>
         </div>
       </section>
 
@@ -89,6 +111,7 @@
 
   <!-- Scripts -->
   <script src="js/products-data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
   <script>
     // Render header with 'home' as active nav item
@@ -108,7 +131,7 @@
       return `
         <div class="product-card">
           <a href="product.html?id=${p.id}" class="thumb">
-            <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
+            ${productImageHTML(p.images[0], p.name, { loading: 'lazy' })}
           </a>
           <div class="product-info">
             <a href="product.html?id=${p.id}"><h3>${p.name}</h3></a>
@@ -116,13 +139,14 @@
             <div class="price-row">
               <span class="price-now">₹${p.price.toLocaleString('en-IN')}</span>
             </div>
-            <a href="product.html?id=${p.id}" class="btn btn-primary btn-block">Buy Now</a>
+            <a href="product.html?id=${p.id}" class="btn btn-primary btn-block">${t('btn.buyNow')}</a>
           </div>
         </div>
       `;
     }
 
     renderFeaturedProducts();
+    document.addEventListener('yp:langchange', renderFeaturedProducts);
   </script>
 </body>
 </html>

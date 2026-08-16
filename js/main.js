@@ -37,6 +37,31 @@ const BRAND = {
    is replaced with the real value. */
 const UPI_ID = `${BRAND.upiMobile}@${BRAND.upiVpaHandle}`;
 
+/* ---------- SHARED HELPER: read ?id= from the URL ----------
+   Used by product.html (product-detail.js) and payment.html (payment.js). */
+function getProductIdFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return parseInt(params.get("id"), 10);
+}
+
+/* ---------- IMAGE HELPER ----------
+   Builds a <picture> tag serving WebP (smaller) with the original
+   JPEG/PNG as fallback for browsers that don't support WebP.
+   Used everywhere a product image is rendered so we don't duplicate
+   this markup across products.js / product-detail.js / payment.js /
+   index.html. width/height are optional but help prevent layout
+   shift (CLS) when known. */
+function productImageHTML(src, alt, opts = {}) {
+  const { className = '', loading = 'lazy', width = '', height = '' } = opts;
+  const webpSrc = src.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+  const cls = className ? ` class="${className}"` : '';
+  const dims = (width && height) ? ` width="${width}" height="${height}"` : '';
+  return `<picture>
+    <source srcset="${webpSrc}" type="image/webp">
+    <img src="${src}" alt="${alt}"${cls} loading="${loading}"${dims}>
+  </picture>`;
+}
+
 /* ---------- HIDE PAGE LOADER ---------- */
 window.addEventListener("load", () => {
   const loader = document.getElementById("page-loader");
@@ -46,40 +71,52 @@ window.addEventListener("load", () => {
 });
 
 /* ---------- INJECT HEADER ---------- */
+let _lastActivePage = null;
 function renderHeader(activePage) {
+  _lastActivePage = activePage !== undefined ? activePage : _lastActivePage;
   const header = document.getElementById("site-header");
   if (!header) return;
 
   header.innerHTML = `
     <div class="container header-inner">
-      <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+      <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
       <a href="index.html" class="logo-link">
-        <img src="assets/images/logo.svg" alt="${BRAND.name} logo" width="140" height="38">
+        <img src="assets/images/logo.png" alt="${BRAND.name} logo" width="140" height="38">
       </a>
       <form class="header-search" id="header-search-form" role="search">
-        <input type="search" id="header-search-input" placeholder="Search for products..." aria-label="Search products">
-        <button type="submit" aria-label="Search">🔍</button>
+        <label for="header-search-input" class="sr-only">${t('search.aria')}</label>
+        <input type="search" id="header-search-input" placeholder="${t('search.placeholder')}" aria-label="${t('search.aria')}">
+        <button type="submit" aria-label="${t('search.aria')}">🔍</button>
       </form>
-      <nav class="site-nav" id="site-nav">
+      <button type="button" class="lang-toggle" id="lang-toggle-btn" aria-label="Switch language / भाषा बदलें">${t('lang.toggleLabel')}</button>
+      <nav class="site-nav" id="site-nav" aria-label="Primary">
         <ul>
-          <li><a href="index.html" data-page="home">Home</a></li>
-          <li><a href="products.html" data-page="products">Products</a></li>
-          <li><a href="about.html" data-page="about">About Us</a></li>
-          <li><a href="contact.html" data-page="contact">Contact Us</a></li>
-          <li><a href="faq.html" data-page="faq">FAQ</a></li>
+          <li><a href="index.html" data-page="home">${t('nav.home')}</a></li>
+          <li><a href="products.html" data-page="products">${t('nav.products')}</a></li>
+          <li><a href="about.html" data-page="about">${t('nav.about')}</a></li>
+          <li><a href="contact.html" data-page="contact">${t('nav.contact')}</a></li>
+          <li><a href="faq.html" data-page="faq">${t('nav.faq')}</a></li>
         </ul>
       </nav>
     </div>
     <div class="nav-overlay" id="nav-overlay"></div>
   `;
 
-  // Highlight active nav link
+  // Highlight active nav link (visually + for assistive tech)
   if (activePage) {
     const link = header.querySelector(`[data-page="${activePage}"]`);
-    if (link) link.classList.add("active");
+    if (link) {
+      link.classList.add("active");
+      link.setAttribute("aria-current", "page");
+    }
   }
+
+  // Language toggle
+  document.getElementById("lang-toggle-btn").addEventListener("click", () => {
+    setLang(getLang() === 'hi' ? 'en' : 'hi');
+  });
 
   // Mobile nav toggle
   const navToggle = document.getElementById("nav-toggle");
@@ -88,10 +125,12 @@ function renderHeader(activePage) {
   function closeNav() {
     siteNav.classList.remove("open");
     overlay.classList.remove("open");
+    navToggle.setAttribute("aria-expanded", "false");
   }
   navToggle.addEventListener("click", () => {
-    siteNav.classList.toggle("open");
+    const isOpen = siteNav.classList.toggle("open");
     overlay.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", String(isOpen));
   });
   overlay.addEventListener("click", closeNav);
   siteNav.querySelectorAll("a").forEach(a => a.addEventListener("click", closeNav));
@@ -134,39 +173,39 @@ function renderFooter() {
   footer.innerHTML = `
     <div class="container footer-inner">
       <div class="footer-col">
-        <img src="assets/images/logo.svg" alt="${BRAND.name}" width="150" style="margin-bottom:12px;">
-        <p>Pooja & spiritual essentials — incense, dhoop and Rudraksha bracelets, sourced and sold by ${BRAND.name}.</p>
+        <img src="assets/images/logo.png" alt="${BRAND.name}" width="150" height="41" style="margin-bottom:12px;">
+        <p>${t('hero.subtitle')}</p>
         ${socialHtml}
       </div>
       <div class="footer-col">
-        <h4>Quick Links</h4>
+        <h4>${t('footer.quickLinks')}</h4>
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="products.html">All Products</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="index.html">${t('nav.home')}</a></li>
+          <li><a href="products.html">${t('nav.products')}</a></li>
+          <li><a href="about.html">${t('nav.about')}</a></li>
+          <li><a href="contact.html">${t('nav.contact')}</a></li>
+          <li><a href="faq.html">${t('nav.faq')}</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Policies</h4>
+        <h4>${t('footer.policies')}</h4>
         <ul>
-          <li><a href="privacy-policy.html">Privacy Policy</a></li>
-          <li><a href="terms-conditions.html">Terms &amp; Conditions</a></li>
-          <li><a href="shipping-policy.html">Shipping Policy</a></li>
-          <li><a href="return-policy.html">Return &amp; Refund Policy</a></li>
+          <li><a href="privacy-policy.html">${t('footer.privacy')}</a></li>
+          <li><a href="terms-conditions.html">${t('footer.terms')}</a></li>
+          <li><a href="shipping-policy.html">${t('footer.shipping')}</a></li>
+          <li><a href="return-policy.html">${t('footer.returns')}</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Get In Touch</h4>
-        <ul>${contactLines || '<li>Message us on WhatsApp — button on every page</li>'}</ul>
+        <h4>${t('footer.getInTouch')}</h4>
+        <ul>${contactLines || `<li>${t('footer.whatsappOnly')}</li>`}</ul>
         <div class="payment-icons">
           <span>UPI</span>
         </div>
       </div>
     </div>
     <div class="footer-bottom container">
-      &copy; <span id="footer-year"></span> ${BRAND.name}. All rights reserved.
+      &copy; <span id="footer-year"></span> ${BRAND.name}. ${t('footer.rights')}
     </div>
   `;
 
@@ -229,8 +268,41 @@ function buildWhatsappOrderLink(order) {
   return `https://wa.me/${BRAND.whatsappNumber}?text=${encodeURIComponent(lines.join('\n'))}`;
 }
 
+/* ---------- SEO: Organization/Store structured data (site-wide) ----------
+   Injected on every page since main.js loads everywhere. Only includes
+   fields we actually have real values for (name, url, logo) — no
+   fabricated address/phone/sameAs links. */
+function injectOrganizationStructuredData() {
+  if (document.getElementById('organization-jsonld')) return;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "YantraPlus",
+    "url": "https://yantraplus.pages.dev/",
+    "logo": "https://yantraplus.pages.dev/assets/images/logo.png",
+    "image": "https://yantraplus.pages.dev/assets/images/hero-banner.jpg",
+    "description": "YantraPlus sells incense sticks, dhoop, hawan cups and Rudraksha bracelets online."
+  };
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.id = 'organization-jsonld';
+  script.textContent = JSON.stringify(schema);
+  document.head.appendChild(script);
+}
+
 /* ---------- RUN ON EVERY PAGE ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   renderFooter();
   renderWhatsappButton();
+  injectOrganizationStructuredData();
+});
+
+/* ---------- LANGUAGE CHANGE: re-render JS-generated chrome ----------
+   Header/footer text is generated by JS (not static HTML), so when the
+   language toggle fires, redraw them here. Page-specific scripts
+   (products.js, product-detail.js, payment.js) listen for the same
+   event to redraw their own dynamic content. */
+document.addEventListener('yp:langchange', () => {
+  renderHeader(_lastActivePage);
+  renderFooter();
 });

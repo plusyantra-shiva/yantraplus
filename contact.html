@@ -5,8 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact Us — YantraPlus</title>
   <meta name="description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us via WhatsApp, email, phone or the contact form.">
-  <link rel="canonical" href="https://yourdomain.com/contact.html">
-  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="canonical" href="https://yantraplus.pages.dev/contact.html">
+  <meta name="robots" content="index, follow">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Contact Us — YantraPlus">
+  <meta property="og:description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us via WhatsApp, phone or the contact form.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yantraplus.pages.dev/contact.html">
+  <meta property="og:image" content="https://yantraplus.pages.dev/assets/images/hero-banner.jpg">
+  <meta property="og:site_name" content="YantraPlus">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Contact Us — YantraPlus">
+  <meta name="twitter:description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us via WhatsApp, phone or the contact form.">
+  <meta name="twitter:image" content="https://yantraplus.pages.dev/assets/images/hero-banner.jpg">
+  <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+  <!-- Hindi font support (loaded only when needed; falls back instantly to system fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -25,33 +42,33 @@
     </section>
 
     <div class="container">
-      <div class="breadcrumb"><a href="index.html">Home</a> / Contact Us</div>
+      <div class="breadcrumb"><a href="index.html" data-i18n="nav.home">Home</a> / <span data-i18n="nav.contact">Contact Us</span></div>
 
       <div class="contact-layout">
         <!-- Contact Info -->
         <div class="content-block">
-          <h2>Get In Touch</h2>
+          <h2 data-i18n="contact.getInTouch">Get In Touch</h2>
           <div class="contact-info-list mt-1" id="contact-info-list">
             <!-- Filled by JS from BRAND config — only shows fields that are actually set -->
           </div>
-          <a href="#" id="contact-whatsapp-btn" target="_blank" rel="noopener" class="btn btn-success btn-block">Chat on WhatsApp</a>
+          <a href="#" id="contact-whatsapp-btn" target="_blank" rel="noopener" class="btn btn-success btn-block" data-i18n="contact.chatWhatsapp">Chat on WhatsApp</a>
         </div>
 
         <!-- Contact Form -->
         <div class="content-block">
-          <h2>Send Us a Message</h2>
+          <h2 data-i18n="contact.sendMessage">Send Us a Message</h2>
           <p class="form-note mb-1">This form works offline (no backend) — it opens WhatsApp with your message pre-filled, ready to send.</p>
           <form class="contact-form" id="contact-form">
             <div class="form-group">
-              <label for="cf-name">Full Name *</label>
+              <label for="cf-name" data-i18n="contact.fullName">Full Name *</label>
               <input type="text" id="cf-name" required placeholder="Your name">
             </div>
             <div class="form-group">
-              <label for="cf-phone">Your Phone/WhatsApp Number *</label>
+              <label for="cf-phone" data-i18n="contact.yourPhone">Your Phone/WhatsApp Number *</label>
               <input type="tel" id="cf-phone" required placeholder="+91 98765 43210">
             </div>
             <div class="form-group">
-              <label for="cf-subject">Subject *</label>
+              <label for="cf-subject" data-i18n="contact.subject">Subject *</label>
               <select id="cf-subject" required>
                 <option value="">Select a topic</option>
                 <option>Order Query</option>
@@ -62,10 +79,10 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="cf-message">Message *</label>
+              <label for="cf-message" data-i18n="contact.message">Message *</label>
               <textarea id="cf-message" rows="5" required placeholder="How can we help you?"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Send via WhatsApp</button>
+            <button type="submit" class="btn btn-primary btn-block" data-i18n="contact.sendWhatsapp">Send via WhatsApp</button>
             <div id="form-success">✅ Opening WhatsApp with your message ready to send.</div>
           </form>
         </div>
@@ -75,6 +92,7 @@
 
   <footer class="site-footer" id="site-footer"></footer>
 
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
   <script>
     renderHeader('contact');

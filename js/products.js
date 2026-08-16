@@ -7,6 +7,15 @@
 let currentCategory = "all";
 let currentSearch = "";
 
+/* Category id -> translated label (CATEGORIES array from products-data.js
+   still carries the English default label as a fallback). */
+function categoryLabel(catId) {
+  if (catId === 'all') return t('filter.all');
+  if (catId === 'incense') return t('category.incense');
+  if (catId === 'bracelets') return t('category.bracelets');
+  return catId;
+}
+
 /* Generate the same product card markup used on the homepage.
    No MRP/discount badge or ratings are shown — Meesho doesn't display
    an MRP for these listings and we don't fabricate ratings. */
@@ -14,7 +23,7 @@ function buildProductCard(p) {
   return `
     <div class="product-card">
       <a href="product.html?id=${p.id}" class="thumb">
-        <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
+        ${productImageHTML(p.images[0], p.name, { loading: 'lazy' })}
       </a>
       <div class="product-info">
         <a href="product.html?id=${p.id}"><h3>${p.name}</h3></a>
@@ -22,7 +31,7 @@ function buildProductCard(p) {
         <div class="price-row">
           <span class="price-now">₹${p.price.toLocaleString('en-IN')}</span>
         </div>
-        <a href="product.html?id=${p.id}" class="btn btn-primary btn-block">Buy Now</a>
+        <a href="product.html?id=${p.id}" class="btn btn-primary btn-block">${t('btn.buyNow')}</a>
       </div>
     </div>
   `;
@@ -32,8 +41,8 @@ function buildProductCard(p) {
 function renderFilterChips() {
   const bar = document.getElementById("filter-bar");
   bar.innerHTML = CATEGORIES.map(cat => `
-    <button class="filter-chip ${cat.id === currentCategory ? 'active' : ''}" data-cat="${cat.id}">
-      ${cat.label}
+    <button class="filter-chip ${cat.id === currentCategory ? 'active' : ''}" data-cat="${cat.id}" aria-pressed="${cat.id === currentCategory}">
+      ${categoryLabel(cat.id)}
     </button>
   `).join('');
 
@@ -59,11 +68,13 @@ function renderProductList() {
     return matchesCategory && matchesSearch;
   });
 
-  countEl.textContent = `${filtered.length} product${filtered.length !== 1 ? 's' : ''} found`;
+  countEl.textContent = `${filtered.length} ${t('products.resultsCount')}`;
 
   if (filtered.length === 0) {
     grid.innerHTML = '';
-    document.getElementById("no-results").style.display = 'block';
+    const noResults = document.getElementById("no-results");
+    noResults.querySelector('p:last-child').textContent = t('products.noResults');
+    noResults.style.display = 'block';
     return;
   }
   document.getElementById("no-results").style.display = 'none';
@@ -90,6 +101,7 @@ function readURLParams() {
 function setupPageSearch() {
   const input = document.getElementById("page-search-input");
   input.value = currentSearch;
+  input.placeholder = t('products.searchPlaceholder');
   input.addEventListener("input", (e) => {
     currentSearch = e.target.value;
     renderProductList();
@@ -98,9 +110,12 @@ function setupPageSearch() {
 }
 
 /* Initialize the products page */
-document.addEventListener("DOMContentLoaded", () => {
+function initProductsPage() {
   readURLParams();
   renderFilterChips();
   setupPageSearch();
   renderProductList();
-});
+}
+
+document.addEventListener("DOMContentLoaded", initProductsPage);
+document.addEventListener("yp:langchange", initProductsPage);

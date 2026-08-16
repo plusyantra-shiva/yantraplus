@@ -6,7 +6,11 @@
   <title>Payment — YantraPlus</title>
   <meta name="description" content="Complete your UPI payment securely for your YantraPlus order.">
   <meta name="robots" content="noindex"> <!-- payment pages shouldn't be indexed by search engines -->
-  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
+  <!-- Hindi font support (loaded only when needed; falls back instantly to system fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -25,6 +29,7 @@
   <footer class="site-footer" id="site-footer"></footer>
 
   <script src="js/products-data.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
   <script src="js/payment.js"></script>
   <script>
