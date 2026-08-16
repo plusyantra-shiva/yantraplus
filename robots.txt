@@ -1,7 +1,7 @@
-# robots.txt for YantraPlus (https://yantraplus.pages.dev)
+# robots.txt for YantraPlus (https://yantraplus.github.io)
 
 User-agent: *
 Allow: /
 Disallow: /payment.html
 
-Sitemap: https://yantraplus.pages.dev/sitemap.xml
+Sitemap: https://yantraplus.github.io/sitemap.xml

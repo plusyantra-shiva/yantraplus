@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Us — YantraPlus</title>
-  <meta name="description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us via WhatsApp, email, phone or the contact form.">
-  <link rel="canonical" href="https://yantraplus.pages.dev/contact.html">
+  <title>Contact Us | YantraPlus — Premium Spiritual &amp; Pooja Products</title>
+  <meta name="description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us on WhatsApp or shop our premium incense, dhoop, hawan and Rudraksha products on Meesho.">
+  <link rel="canonical" href="https://yantraplus.github.io/contact.html">
   <meta name="robots" content="index, follow">
   <!-- Open Graph -->
-  <meta property="og:title" content="Contact Us — YantraPlus">
-  <meta property="og:description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us via WhatsApp, phone or the contact form.">
+  <meta property="og:title" content="Contact Us | YantraPlus — Premium Spiritual &amp; Pooja Products">
+  <meta property="og:description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us on WhatsApp or shop our premium incense, dhoop, hawan and Rudraksha products on Meesho.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://yantraplus.pages.dev/contact.html">
-  <meta property="og:image" content="https://yantraplus.pages.dev/assets/images/hero-banner.jpg">
+  <meta property="og:url" content="https://yantraplus.github.io/contact.html">
+  <meta property="og:image" content="https://yantraplus.github.io/assets/images/hero-banner.jpg">
   <meta property="og:site_name" content="YantraPlus">
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Contact Us — YantraPlus">
-  <meta name="twitter:description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us via WhatsApp, phone or the contact form.">
-  <meta name="twitter:image" content="https://yantraplus.pages.dev/assets/images/hero-banner.jpg">
+  <meta name="twitter:title" content="Contact Us | YantraPlus — Premium Spiritual &amp; Pooja Products">
+  <meta name="twitter:description" content="Get in touch with YantraPlus for order queries, product questions, or support. Reach us on WhatsApp or shop our premium incense, dhoop, hawan and Rudraksha products on Meesho.">
+  <meta name="twitter:image" content="https://yantraplus.github.io/assets/images/hero-banner.jpg">
   <link rel="icon" type="image/png" href="assets/images/favicon-32.png">
   <!-- Hindi font support (loaded only when needed; falls back instantly to system fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -103,7 +103,8 @@
     const infoItems = [
       BRAND.phone ? { icon: '📞', label: 'Call / WhatsApp', value: BRAND.phone } : null,
       BRAND.email ? { icon: '✉️', label: 'Email', value: BRAND.email } : null,
-      BRAND.address ? { icon: '📍', label: 'Address', value: BRAND.address } : null
+      BRAND.address ? { icon: '📍', label: 'Address', value: BRAND.address } : null,
+      BRAND.meeshoUrl ? { icon: '🛍️', label: 'Shop on Meesho', value: `<a href="${BRAND.meeshoUrl}" target="_blank" rel="noopener" style="color:var(--brand-primary); font-weight:600;">${BRAND.meeshoUrl.replace('https://','')}</a>` } : null
     ].filter(Boolean);
     infoList.innerHTML = infoItems.length
       ? infoItems.map(i => `

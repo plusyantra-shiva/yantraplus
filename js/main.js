@@ -19,14 +19,16 @@
      our conversation didn't provide them. Fill in only what's true. */
 const BRAND = {
   name: "YantraPlus",
-  tagline: "Pooja & Spiritual Essentials",
-  whatsappNumber: "919743763945", // ASSUMED same as the UPI mobile number — confirm or change
+  tagline: "Divine Fragrance | Pure Blessings",
+  whatsappNumber: "91982365741",
   email: "", // not provided — add your real email here if you want it shown
-  phone: "+91 97437 63945",
+  phone: "+91 98236 5741",
   address: "", // not provided — add your real business address here if you want it shown
-  upiMobile: "9743763945",
+  upiMobile: "982365741",
   upiVpaHandle: "CONFIRM-HANDLE", // PLACEHOLDER — replace with your real handle (see chat)
-  instagram: "", // not provided
+  meeshoUrl: "https://www.meesho.com/yantraplus",
+  websiteUrl: "https://yantraplus.github.io",
+  instagram: "", // leave empty until an official link exists — never fabricate
   facebook: "", // not provided
   twitter: "", // not provided
   youtube: "" // not provided
@@ -278,10 +280,10 @@ function injectOrganizationStructuredData() {
     "@context": "https://schema.org",
     "@type": "Store",
     "name": "YantraPlus",
-    "url": "https://yantraplus.pages.dev/",
-    "logo": "https://yantraplus.pages.dev/assets/images/logo.png",
-    "image": "https://yantraplus.pages.dev/assets/images/hero-banner.jpg",
-    "description": "YantraPlus sells incense sticks, dhoop, hawan cups and Rudraksha bracelets online."
+    "url": "https://yantraplus.github.io/",
+    "logo": "https://yantraplus.github.io/assets/images/logo.png",
+    "image": "https://yantraplus.github.io/assets/images/hero-banner.jpg",
+    "description": "YantraPlus is a premium Indian spiritual and devotional products brand offering incense sticks, dhoop, hawan cups, pooja samagri and Rudraksha products inspired by India's sacred traditions."
   };
   const script = document.createElement('script');
   script.type = 'application/ld+json';

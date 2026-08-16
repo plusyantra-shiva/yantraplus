@@ -2,7 +2,7 @@
 
 Production-ready, responsive e-commerce site for YantraPlus. Pure HTML/CSS/
 vanilla JS, no backend, no framework. Deployed on **Cloudflare Pages**:
-https://yantraplus.pages.dev/
+https://yantraplus.github.io/
 
 ## ⚠️ Before you go live — 1 thing you MUST do
 

@@ -149,8 +149,8 @@ function injectProductStructuredData(product, categoryLabel) {
   document.getElementById('product-jsonld')?.remove();
   document.getElementById('breadcrumb-jsonld')?.remove();
 
-  const pageUrl = `https://yantraplus.pages.dev/product.html?id=${product.id}`;
-  const imageUrl = `https://yantraplus.pages.dev/${product.images[0]}`;
+  const pageUrl = `https://yantraplus.github.io/product.html?id=${product.id}`;
+  const imageUrl = `https://yantraplus.github.io/${product.images[0]}`;
 
   const productSchema = {
     "@context": "https://schema.org/",
@@ -173,9 +173,9 @@ function injectProductStructuredData(product, categoryLabel) {
     "@context": "https://schema.org/",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yantraplus.pages.dev/index.html" },
-      { "@type": "ListItem", "position": 2, "name": "Products", "item": "https://yantraplus.pages.dev/products.html" },
-      { "@type": "ListItem", "position": 3, "name": categoryLabel, "item": `https://yantraplus.pages.dev/products.html?category=${product.category}` },
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yantraplus.github.io/index.html" },
+      { "@type": "ListItem", "position": 2, "name": "Products", "item": "https://yantraplus.github.io/products.html" },
+      { "@type": "ListItem", "position": 3, "name": categoryLabel, "item": `https://yantraplus.github.io/products.html?category=${product.category}` },
       { "@type": "ListItem", "position": 4, "name": product.name, "item": pageUrl }
     ]
   };
